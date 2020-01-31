@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+
+# Rationale: if you are working without merge requests and branches, you probably still
+# want to link commits to a shared context of what the work was about. Because this is 
+# a manual process here is a script that reminds you if you forget to link up the issue 
+# number.
+
+# Deployment:
+# Copy this to the .git/hooks directory of your project
+
+import sys
+
+commit_msg_filepath = sys.argv[1]
+
+with open(commit_msg_filepath, 'r+') as fh:
+    lines = fh.readlines()
+
+    # Checks whether there is an issue number in the first line of a commit message
+    # An issue number is identified by a #123 but we only look for the hash since
+    # it's unlikely to find just a hash in a first line.
+    
+    # For small or housekeeping commits for which there are no issues, there is the
+    # bypass of typing "no-issue" in the line.
+    
+    if '#' not in lines[0] and 'no-issue' not in lines[0]:
+        print("No issue number in first line of commit message. Stopping.")
+        sys.exit(1)
